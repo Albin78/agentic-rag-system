@@ -1,0 +1,6 @@
+1. Goal
+2. State
+3. Memory
+4. Policy (Decision Engine)
+5. Action Interface (Tools)
+6. Control Loop

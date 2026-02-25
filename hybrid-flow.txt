@@ -1,0 +1,64 @@
+────────────────────────────────────────────────────────
+                 INDEXING PHASE (Offline)
+────────────────────────────────────────────────────────
+
+                Raw PDF / Documents
+                         │
+                         ▼
+                  Text Chunking
+                         │
+          ┌──────────────┴──────────────┐
+          │                             │
+          ▼                             ▼
+  ────────────────               ─────────────────
+  DENSE PIPELINE                  SPARSE PIPELINE
+  ────────────────               ─────────────────
+
+  Compute Embeddings              Tokenize Text
+  (768-d vectors)                 (Bag-of-Words)
+          │                             │
+          ▼                             ▼
+  Normalize Vectors              Compute Term Frequencies
+          │                             │
+          ▼                             ▼
+  Store in FAISS HNSW            Build Inverted Index
+  (Vector Index)                 (term → doc list)
+          │                             │
+          └──────────────┬──────────────┘
+                         ▼
+                Hybrid System Ready
+
+
+────────────────────────────────────────────────────────
+                 QUERY PHASE (Online)
+────────────────────────────────────────────────────────
+
+                     User Query
+                         │
+          ┌──────────────┴──────────────┐
+          │                             │
+          ▼                             ▼
+  ────────────────               ─────────────────
+  DENSE SEARCH                    SPARSE SEARCH
+  ────────────────               ─────────────────
+
+  Embed Query                    Tokenize Query
+  (768-d vector)                 (Query Terms)
+          │                             │
+          ▼                             ▼
+  HNSW ANN Search                Use Inverted Index
+  (Top 50 Candidates)            Retrieve Matching Docs
+          │                             │
+          ▼                             ▼
+  Dense Similarity Scores        Compute BM25 Scores
+          │                             │
+          └──────────────┬──────────────┘
+                         ▼
+                    Score Fusion
+         FinalScore = α·Dense + (1-α)·BM25
+                         │
+                         ▼
+                   Rank Documents
+                         │
+                         ▼
+                     Return Top-K

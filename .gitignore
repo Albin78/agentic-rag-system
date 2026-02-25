@@ -1,0 +1,5 @@
+myenv
+*env
+*.json
+data.json
+*.pdf

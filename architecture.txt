@@ -1,0 +1,15 @@
+Input (Text or JSON)
+        ↓
+Schema Validation
+        ↓
+Preprocessing & Normalization
+        ↓
+Chunking (if large)
+        ↓
+Medical-Aware Prompt Template
+        ↓
+LLM Summarization (Controlled)
+        ↓
+Post-Processing Validation
+        ↓
+Structured Output
