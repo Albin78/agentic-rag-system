@@ -232,7 +232,7 @@ if __name__ == "__main__":
     # ---------------------------
     # Create HNSW index
     # ---------------------------
-    index = faiss.IndexHNSWFlat(D, M)
+    index = faiss.IndexHNSWFlat(D, M, faiss.METRIC_INNER_PRODUCT)
     index.hnsw.efSearch = 128
     print("Adding embeddings to HNSW index...")
     index.add(doc_embeddings)
