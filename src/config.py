@@ -10,3 +10,6 @@ class Config:
     ef_construction: int = 200
     metric: str = "ip"
     top_k: int = 5
+
+
+    

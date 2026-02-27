@@ -1,0 +1,12 @@
+langchain==0.2.14
+langchain-core==0.2.36
+langchain-community==0.2.12
+langchain-openai==0.1.22
+langchain-huggingface==0.0.3
+sentence-transformers==2.7.0
+faiss-cpu==1.8.0
+rank-bm25==0.2.2
+tiktoken==0.7.0
+numpy==1.26.4
+torch>=2.2.0
+pypdf==6.7.0
