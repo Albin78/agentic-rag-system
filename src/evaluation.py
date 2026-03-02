@@ -4,7 +4,8 @@ class Evaluator:
 
     @staticmethod
     def recall_at_k(predicted, relevant, k):
-        return len(set(predicted[:k]) & set(relevant)) / len(relevant)
+        pred_ids = [p[0] for p in predicted[:k]]
+        return len(set(pred_ids) & set(relevant)) / len(relevant)
 
     @staticmethod
     def mrr(predicted, relevant):

@@ -2,21 +2,28 @@ import torch
 import numpy as np
 import re
 from rank_bm25 import BM25Okapi
-from pypdf import PdfReader
 from config import Config
 from embedder import Embedder
 from indexer import HNSWIndexer
 from retriever import HybridRetriever
 from evaluation import Evaluator
+from langchain_community.document_loaders import PyPDFLoader
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 
 
-def extract_text(pdf_path):
-    reader = PdfReader(pdf_path)
-    text = ""
-    for page in reader.pages:
-        text += page.extract_text() + "\n"
-    return text
+def load_and_chunk(pdf_path, chunk_size, overlap):
+    loader = PyPDFLoader(pdf_path)
+    documents = loader.load()
+
+    splitter = RecursiveCharacterTextSplitter(
+        chunk_size=chunk_size,
+        chunk_overlap=overlap
+    )
+
+    chunks = splitter.split_documents(documents)
+    return chunks
+
 
 
 def tokenize(text):
@@ -28,8 +35,9 @@ if __name__ == "__main__":
     config = Config()
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    documents = extract_text("Anatomy_and_Physiology.pdf")
-    tokenized_docs = [tokenize(doc) for doc in documents]
+    chunks = load_and_chunk("Anatomy_and_Physiology.pdf", config.chunk_size, config.overlap)
+    texts = [doc.page_content for doc in chunks]
+    tokenized_docs = [tokenize(doc) for doc in texts]
     bm25 = BM25Okapi(tokenized_docs)
 
     # -------------------
@@ -37,7 +45,7 @@ if __name__ == "__main__":
     # -------------------
     embedder = Embedder(config.model_name, device)
 
-    doc_embeddings = embedder.encode_docs(documents)
+    doc_embeddings = embedder.encode_docs(texts)
     dim = doc_embeddings.shape[1]
 
     # -------------------
